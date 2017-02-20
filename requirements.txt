@@ -8,9 +8,13 @@ channels==1.0.3
 constantly==15.1.0
 daphne==1.0.3
 Django==1.9
+djangorestframework==3.5.4
+djangorestframework-jwt==1.9.0
 incremental==16.10.1
+Markdown==2.6.8
 msgpack-python==0.4.8
 packaging==16.8
+PyJWT==1.4.2
 pyparsing==2.1.10
 redis==2.10.5
 six==1.10.0

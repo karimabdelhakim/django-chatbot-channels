@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-
+import datetime
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,8 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'channels',
+    'rest_framework',
+    
     'chatbot',
     'chat',
+    'accounts',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -139,3 +142,31 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ),
+    # 'DEFAULT_PARSER_CLASSES': (
+    #     'rest_framework.parsers.JSONParser',
+    # )
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+        #'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        #'rest_framework.authentication.BasicAuthentication'
+    ),
+    'DEFAULT_PERMISSION_CLASSES':(
+    #'rest_framework.permissions.IsAuthenticated',    
+    #'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    'rest_framework.permissions.AllowAny',    
+    ), 
+}
+
+JWT_AUTH = {
+     'JWT_ALLOW_REFRESH' : True, #allow token refersh
+     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
+
+     }
