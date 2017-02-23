@@ -10,6 +10,7 @@ urlpatterns = [
     url(r'^accounts/logout/$', logout),
     url(r'^admin/', admin.site.urls),
 
-    url(r'^api/$', index_api),
+    url(r'^api/test/$', index_api),#for testing chat using jwt
     url(r'^api/accounts/', include("accounts.api.urls",namespace='users-api')),
+    url(r'^api/chat/', include("chat.api.urls",namespace='chat-api')),
 ]
