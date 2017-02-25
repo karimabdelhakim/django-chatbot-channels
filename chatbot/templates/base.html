@@ -7,25 +7,33 @@
     <title>{% block title %}Chat Example{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="{% static 'css/normalize.css' %}">
   	<link rel="stylesheet" href="{% static 'css/skeleton.css' %}">
   	<link rel="stylesheet" href="{% static 'css/chat.css' %}">
 </head>
 <body>
-	<header>
-		<h1>a header here</h1>
-		{% if user.is_authenticated %}
-			<a href="/accounts/logout/">Logout</a>
-		{% endif %}
-	</header>
+	
+<div class="container">
+  <ol class="breadcrumb">
+    <li><a href="{%url 'index' %}">Home</a></li>
+    {%if not request.user.is_authenticated%}
+    <li class="pull-right"><a href="{%url 'users:register'%}">Register</a></li>     
+    <li class="pull-right"><a href="{%url 'users:login'%}">Login</a></li>
+    {%else%}  
+    <li class="pull-right"><a href="{%url 'users:logout'%}">Logout</a></li> 
+    {%endif%}
+  </ol>
+</div>
 	<div class="section">
     	<div class="container">
       		{% block content %}{% endblock content %}
     	</div>
   	</div>  
   	{% block afterbody %}{% endblock afterbody %}
-</body>
-</body>
-</html>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+</body>
+
+</html>
 

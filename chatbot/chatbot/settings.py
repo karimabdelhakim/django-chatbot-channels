@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'channels',
     'rest_framework',
+    'crispy_forms',
     
     'chatbot',
     'chat',
@@ -58,6 +59,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = 'chatbot.urls'
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 TEMPLATES = [
     {
@@ -167,6 +169,7 @@ REST_FRAMEWORK = {
 
 JWT_AUTH = {
      'JWT_ALLOW_REFRESH' : True, #allow token refersh
-     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3000),
-
+     'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=3600),#2 hours
+     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
+     'JWT_LEEWAY': 20,#seconds
      }

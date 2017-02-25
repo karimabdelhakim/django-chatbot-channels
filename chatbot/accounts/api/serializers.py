@@ -68,8 +68,8 @@ class UserCreateSerializer(ModelSerializer):
 
 class UserLoginSerializer(ModelSerializer):
 	token = CharField(allow_blank=True,read_only=True)
-	expire_at_timestamp = CharField(allow_blank=True,read_only=True)
-	expire_at_date = CharField(allow_blank=True,read_only=True)
+	issued_at_datetime = CharField(allow_blank=True,read_only=True)
+	expire_at_datetime = CharField(allow_blank=True,read_only=True)
 	total_expirDate_days = CharField(allow_blank=True,read_only=True)
 	username = CharField(required=False,allow_blank=True)
 	email = EmailField(label='Email Address',required=False,allow_blank=True)
@@ -78,7 +78,7 @@ class UserLoginSerializer(ModelSerializer):
 	class Meta:
 		model = User
 		fields = ['username','email','password','token',
-				'expire_at_timestamp','expire_at_date',"total_expirDate_days"]
+				'issued_at_datetime','expire_at_datetime',"total_expirDate_days"]
 
 	
 	def validate(self,data):
@@ -114,9 +114,11 @@ class UserLoginSerializer(ModelSerializer):
 		total_exp_date =  api_settings.JWT_REFRESH_EXPIRATION_DELTA
 		payload = jwt_payload_handler(user_obj)
 		token = jwt_encode_handler(payload)#new token
+		print("payload",payload)
 		data["token"] = token
-		data["expire_at_timestamp"] = payload["orig_iat"] #unix timestamp of time token will expire at
+		#data["issued_at_timestamp"] = payload["orig_iat"] #unix timestamp of the date token issued at
+		data["issued_at_datetime"] = datetime.utcfromtimestamp(payload["orig_iat"]).strftime('%Y-%m-%d T %H:%M:%S Z')
 		exp_at = datetime.utcfromtimestamp(payload["exp"]).strftime('%Y-%m-%d T %H:%M:%S Z')
-		data["expire_at_date"] = exp_at #same as orig_iat
+		data["expire_at_datetime"] = exp_at #orig_iat + token expiration time
 		data["total_expirDate_days"] = total_exp_date.days
 		return data
