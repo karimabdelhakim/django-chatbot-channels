@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from chat.models import ChatMessage
+from chat.models import ChatMessage,BotMsgToAll
 from .serializers import UserMessagesSerializer
 from rest_framework.generics import (ListAPIView, RetrieveAPIView,
 	UpdateAPIView,DestroyAPIView,CreateAPIView,RetrieveUpdateAPIView)
@@ -9,7 +9,10 @@ from rest_framework.permissions import (AllowAny,IsAuthenticated,
 #from .permissions import IsOwnerOrReadOnly,IsOwner
 from rest_framework.pagination import (LimitOffsetPagination)
 from .pagination import MessagesPageNumberPagination
-from rest_framework.decorators import api_view
+#
+from itertools import chain
+from operator import attrgetter
+#
 
 
 #for testing chating with jwt authentication 
@@ -23,11 +26,19 @@ class UserMessagesListAPIView(ListAPIView):
 	permission_classes = [IsAuthenticated]
 	serializer_class = UserMessagesSerializer
 	#you can use query params like this abc.com/?limit=8&offset=0 
-	#means get 8 messages starting from the first message
+	#means get 8 messages starting from the first message.
+	#if no query params used then all messages will return.
 	pagination_class = LimitOffsetPagination
+
 	def get_queryset(self,*args,**kwargs):
-		#if no query params used then all messages will return
-		queryset_list = ChatMessage.objects.filter(user=self.request.user).order_by('-timestamp')
+
+		#user and bot messages sent to the specific user
+		chat_msgs_qs = ChatMessage.objects.filter(user=self.request.user).order_by('timestamp')
+		#bot messages sent to all existing users
+		bot_msgs_qs = BotMsgToAll.objects.order_by('timestamp')
+		#joining the two list querysets into one sorted list queryset
+		#sorted by -timestamp cause reverse is True
+		queryset_list = sorted(chain(chat_msgs_qs,bot_msgs_qs),key=attrgetter('timestamp'),reverse=True)
 		
 		return queryset_list
 

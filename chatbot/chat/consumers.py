@@ -1,6 +1,6 @@
 import json
 import time
-from channels import Channel
+from channels import Channel,Group
 # from channels.sessions import channel_session
 from channels.auth import channel_session_user_from_http, channel_session_user
 
@@ -8,7 +8,6 @@ from .models import ChatMessage
 
 # Connected to chat.receive channel
 # chat_send is chat.receive channel consumer
-# bot logic here #all messages pass through here
 @channel_session_user
 def chat_send(message):
     print("chat_send")
@@ -58,7 +57,7 @@ def bot_send(message):
     msg = message.content['message']
     #bot logic
     msg = msg + "  ,bot reply"
-    time.sleep(4)
+    time.sleep(1)
     #then
     # Save to model
     msg_obj = ChatMessage.objects.create(
@@ -93,6 +92,10 @@ def ws_connect(message):
     print("ws_connect")
     # Accept connection
     message.reply_channel.send({"accept": True})
+    #add each user to all-users group when they connect,
+    #so that they can recieve any bot announce message. 
+    Group("all-users").add(message.reply_channel)
+    
 
 
 # Connected to websocket.receive
@@ -106,3 +109,5 @@ def ws_receive(message):
 # Connected to websocket.disconnect
 def ws_disconnect(message):
     print("ws_disconnect")
+    #remove each user from all-users group when they disconnect.
+    Group("all-users").discard(message.reply_channel)

@@ -1,17 +1,11 @@
 import json
 import time
-from channels import Channel
-# from channels.sessions import channel_session
-#from channels.auth import channel_session_user_from_http, channel_session_user
+from channels import Channel,Group
 from django.contrib.auth import get_user_model
 from chat.models import ChatMessage
 from .jwt_decorators import jwt_request_parameter, jwt_message_text_field
 
 
-
-
-
-#@channel_session_user
 def chat_send_api(message):
     print("chat_send_api")
     owner = "user"
@@ -54,7 +48,6 @@ def chat_send_api(message):
 # Connected to bot.receive channel
 # bot_send is bot.receive channel consumer
 # bot consumer 
-#@channel_session_user
 def bot_send_api(message):
     print("bot_send_api")
     owner = "bot"
@@ -98,7 +91,9 @@ def ws_connect_api(message):
     print("ws_connect_api")
     # Accept connection
     message.reply_channel.send({"accept": True})
-
+    #add each user to all-users group when they connect,
+    #so that they can recieve any bot announce message. 
+    Group("all-users").add(message.reply_channel)
 
 # Connected to websocket.receive
 @jwt_message_text_field
@@ -113,3 +108,5 @@ def ws_receive_api(message):
 # Connected to websocket.disconnect
 def ws_disconnect_api(message):
     print("ws_disconnect_api")
+    #remove each user from all-users group when they disconnect.
+    Group("all-users").discard(message.reply_channel)
