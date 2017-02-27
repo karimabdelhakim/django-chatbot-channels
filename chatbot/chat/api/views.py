@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.decorators import login_required
 from chat.models import ChatMessage,BotMsgToAll
-from .serializers import UserMessagesSerializer
+from .serializers import UserMessagesSerializer,BroadcastMessageSerializer
 from rest_framework.generics import (ListAPIView, RetrieveAPIView,
 	UpdateAPIView,DestroyAPIView,CreateAPIView,RetrieveUpdateAPIView)
 from rest_framework.filters import ( SearchFilter, OrderingFilter)
@@ -9,14 +11,15 @@ from rest_framework.permissions import (AllowAny,IsAuthenticated,
 #from .permissions import IsOwnerOrReadOnly,IsOwner
 from rest_framework.pagination import (LimitOffsetPagination)
 from .pagination import MessagesPageNumberPagination
-#
 from itertools import chain
 from operator import attrgetter
-#
 
 
 #for testing chating with jwt authentication 
+@login_required
 def index_api(request):#add /?token=token to the url and then chat
+    if not request.user.is_staff or not request.user.is_superuser:
+        raise PermissionDenied   
     return render(request, "api-index/index.html")
 
 
@@ -51,4 +54,12 @@ class MessagesListAPIView(ListAPIView):
 	filter_backends = [SearchFilter,OrderingFilter]
 	search_fields = ['user__email','user__username','user__last_name','owner','timestamp']
 	pagination_class = MessagesPageNumberPagination
+
+#send broadcast message
+class BroadcastMessageSendAPIView(CreateAPIView):
+	serializer_class = BroadcastMessageSerializer
+	permission_classes = [IsAdminUser]
+
+	def perform_create(self, serializer):
+		serializer.save(staff=self.request.user)	
 

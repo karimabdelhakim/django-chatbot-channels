@@ -4,7 +4,7 @@
 
 <html>
 <head>
-    <title>{% block title %}Chat Example{% endblock %}</title>
+    <title>{% block title %}ChatBot{% endblock %}</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -17,6 +17,10 @@
 <div class="container">
   <ol class="breadcrumb">
     <li><a href="{%url 'index' %}">Home</a></li>
+    {%if request.user.is_staff or request.user.is_superuser %}
+    <li><a href="{%url 'broadcast' %}">broadcast</a></li>
+    <li><a href="{%url 'jwt-test' %}">jwt test</a></li>
+    {%endif%}
     {%if not request.user.is_authenticated%}
     <li class="pull-right"><a href="{%url 'users:register'%}">Register</a></li>     
     <li class="pull-right"><a href="{%url 'users:login'%}">Login</a></li>

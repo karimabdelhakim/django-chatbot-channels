@@ -1,4 +1,4 @@
-from chat.models import ChatMessage
+from chat.models import ChatMessage ,BotMsgToAll
 from django.contrib.auth import get_user_model
 from rest_framework.serializers  import (ModelSerializer, 
 HyperlinkedIdentityField, SerializerMethodField,
@@ -23,3 +23,8 @@ class UserMessagesSerializer(ModelSerializer):
 	
 	def get_formated_timestamp(self,obj):
 		return obj.formatted_timestamp
+
+class BroadcastMessageSerializer(ModelSerializer):
+	class Meta:
+		model = BotMsgToAll
+		fields = ['message']		

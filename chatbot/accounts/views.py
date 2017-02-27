@@ -6,6 +6,8 @@ from django.contrib.auth import (
 	)
 from django.shortcuts import render,redirect
 from .forms import UserLoginForm,UserRegisterForm
+#from django.contrib import messages
+
 # Create your views here.
 def login_view(request):
 	next = request.GET.get('next')
