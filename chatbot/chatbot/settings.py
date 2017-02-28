@@ -145,6 +145,18 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+#static_cdn represents the web service you will use in production for static files only
+#media_cdn represents the web service you will use in production for media(uploaded) files only
+#you will change the path in production to the web service url
+#use this command to copy static files from static folder to static_cdn(web server)
+#python manage.py collectstatic
+#STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR),"static_cdn")#one folder up from BASE_DIR
+#MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR),"media_cdn")#one folder up from BASE_DIR
+
+
+
+
+
 
 
 REST_FRAMEWORK = {
